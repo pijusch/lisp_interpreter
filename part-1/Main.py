@@ -10,4 +10,5 @@ if __name__ == '__main__':
             break
         else:
             exp = exp_input(x)  # Use this for eval()
-            print(' '.join(exp_output(exp)))
+            if exp:
+                print(' '.join(exp_output(exp)))
