@@ -1,14 +1,16 @@
-from Utilities import *
+from Lisp import Lisp
 
 
 if __name__ == '__main__':
-    x = None
+    lisp = Lisp()
 
     while 1:
         x = input()
         if x == '$$':
+            print('> bye!!')
             break
         else:
-            exp = exp_input(x)  # Use this for eval()
+            exp = lisp.input(x)
+            # eval()
             if exp:
-                print(' '.join(exp_output(exp)))
+                print('> ' + ' '.join(lisp.output(exp)))
