@@ -21,7 +21,7 @@ class Lisp:
         tee.name = 'T'
         self.update_sym_list(tee)
 
-    def eval(self):
+    def eval(self):    # To be implemented in Part2
         return None
 
     def input(self, x):
@@ -78,16 +78,16 @@ class Lisp:
     def make_tree(self, exp):
         tree = SExp()
         left_par = exp.find('(')
-        right_par = exp.rfind(')')
 
-        if left_par == -1 and right_par == -1:
+        if left_par == -1: # Its atomic
             if re.fullmatch('-?[0-9]+', exp):
                 exp = int(exp)
                 tree.type = 0
                 tree.val = exp
-            else:  # Too general. No Restriction on literals
+            else:
                 if ' ' in exp:
                     print('> **error missing parenthesis**')
+                    return None
                 elif '$' in exp:
                     print('> **error: unexpected $**')
                     return None
@@ -104,7 +104,8 @@ class Lisp:
                     tree.name = exp
                     self.update_sym_list(tree)
         else:
-            if len(exp[right_par+1:].strip()) != 0:
+            right_par = self.get_the_bracket(left_par,exp)
+            if len(exp[right_par+1:].strip()) != 0 or len(exp[:left_par].strip())!=0:
                 print('> **error missing parenthesis')
                 return None
             tree.type = 2
@@ -152,10 +153,23 @@ class Lisp:
             elif ls == 0:
                 r = self.get_the_bracket(ls, exp)
                 parts.append(exp[ls:r + 1])
-                exp = exp[r + 2:]
+                exp = exp[r + 1:]
             else:
                 parts += exp[:ls].split()
                 exp = exp[ls:]
+
+        #nparts = []
+
+        #for i in parts:
+         #   if i != '.':
+         #       temp = i.split('.')
+         #       if len(temp[0]) !=0 :
+         #           nparts.append(temp[0])
+         #       for j in temp[1:]:
+         #           if len(j) != 0:
+         #               nparts += ['.', j]
+         #   else:
+         #       nparts.append('.')
 
         return parts
 
@@ -175,6 +189,8 @@ class Lisp:
         c = 0
         i = 0
         while i < len(exp):
+            if c < 0:
+                return -1
             if exp[i] == '(':
                 c += 1
             elif exp[i] == ')':
