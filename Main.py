@@ -13,4 +13,4 @@ if __name__ == '__main__':
             exp = lisp.input(x)
             # eval()
             if exp:
-                print('> ' + ' '.join(lisp.output(exp)))
+                print('> ' + ''.join(lisp.output(exp)))

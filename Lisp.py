@@ -5,7 +5,10 @@ import re
 class Lisp:
 
     def __init__(self):
-        self.symbolic_list = []
+        self.symbolicList = []
+        self.dList = []
+        self.aList =[]
+
         # NIL atom
         nil = SExp()
         nil.type = 1
@@ -38,8 +41,8 @@ class Lisp:
         elif len(full_x) == 0:
             print('> **error: empty**')
             return None
-        elif re.search('[^a-z^A-Z^0-9^(^)^.^\s]+', full_x):
-            full_x = re.search('[^a-z^A-Z^0-9^(^)^.^\s]+', full_x)
+        elif re.search('[^a-z^A-Z^0-9^(^)^.^\s^-]+', full_x):
+            full_x = re.search('[^a-z^A-Z^0-9^(^)^.^\s^-]+', full_x)
             print('> **error unexpected ' + full_x.group() + '**')
             return None
 
@@ -53,7 +56,7 @@ class Lisp:
             out.append('(')
             if tree.left:
                 out += self.output(tree.left)
-            out.append('.')
+            out.append(' . ')
             if tree.right:
                 out += self.output(tree.right)
             out.append(')')
@@ -65,12 +68,12 @@ class Lisp:
         return out
 
     def check_sym_list(self, string):
-        for i in self.symbolic_list:
+        for i in self.symbolicList:
             if i.name == string:
                 return i
 
     def update_sym_list(self, atom):
-        self.symbolic_list.append(atom)
+        self.symbolicList.append(atom)
 
     def make_tree(self, exp):
         tree = SExp()
@@ -78,7 +81,7 @@ class Lisp:
         right_par = exp.rfind(')')
 
         if left_par == -1 and right_par == -1:
-            if re.fullmatch('[0-9]+', exp):
+            if re.fullmatch('-?[0-9]+', exp):
                 exp = int(exp)
                 tree.type = 0
                 tree.val = exp
@@ -88,8 +91,8 @@ class Lisp:
                 elif '$' in exp:
                     print('> **error: unexpected $**')
                     return None
-                elif not re.fullmatch('[A-Z]+[a-zA-Z0-9]*', exp):
-                    print('> **error: wrong symbolic ' + exp + '**')
+                elif not re.fullmatch('[A-Z]+[A-Z0-9]*', exp):
+                    print('> **error: illegal symbolic ' + exp + '**')
                     return None
 
                 atom = self.check_bracket(exp)
@@ -101,6 +104,9 @@ class Lisp:
                     tree.name = exp
                     self.update_sym_list(tree)
         else:
+            if len(exp[right_par+1:].strip()) != 0:
+                print('> **error missing parenthesis')
+                return None
             tree.type = 2
             exp = self.exp_strip(exp[left_par + 1:right_par])
             parts = self.extract_parts(exp)
@@ -132,10 +138,10 @@ class Lisp:
 
         return tree
 
-    def exp_strip(self,exp):
+    def exp_strip(self, exp):
         return re.sub(' +', ' ', exp).strip()
 
-    def extract_parts(self,exp):
+    def extract_parts(self, exp):
         parts = []  # check end-cases
 
         while len(exp) > 0:
@@ -153,7 +159,7 @@ class Lisp:
 
         return parts
 
-    def get_the_bracket(i, exp):
+    def get_the_bracket(self, i, exp):
         j = i
         c = 1
         while c != 0:
