@@ -81,6 +81,18 @@ class Lisp:
         tee.name = 'EQ'
         self.update_sym_list(tee)
 
+        # CAR atom
+        tee = SExp()
+        tee.type = 1
+        tee.name = 'PLUS'
+        self.update_sym_list(tee)
+
+        # CAR atom
+        tee = SExp()
+        tee.type = 1
+        tee.name = 'MINUS'
+        self.update_sym_list(tee)
+
         self.dList = self.check_sym_list('NIL')
 
     def evlis(self, exp, alist):
@@ -89,6 +101,25 @@ class Lisp:
         else:
             return self.cons(self.eval(self.car(exp), alist), self.evlis(self.cdr(exp), alist))
 
+    def plus(self, exp1, exp2):
+        if exp1.type == 0 and exp2.type == 0:
+            temp = SExp()
+            temp.type = 0
+            temp.val = exp1.val + exp2.val
+            return temp
+        else:
+            print('wrong with plus')
+            return None
+
+    def minus(self, exp1, exp2):
+        if exp1.type == 0 and exp2.type == 0:
+            temp = SExp()
+            temp.type = 0
+            temp.val = exp1.val - exp2.val
+            return temp
+        else:
+            print('wrong with minus')
+            return None
 
     def evcon(self, exp, alist):
         if self.null(exp).name == 'T':
@@ -114,7 +145,7 @@ class Lisp:
             return self.get_val(exp, self.cdr(alist))
 
     def eval(self, exp, alist):
-        #print(''.join(self.output(alist)))
+        print(''.join(self.output(alist)))
         if self.atom(exp).name == 'T':
             if self.int_(exp).name == 'T':
                 return exp
@@ -171,8 +202,11 @@ class Lisp:
                 return self.null(self.car(x))
             elif self.eq(f, self.check_sym_list('EQ')).name == 'T':
                 return self.eq(self.car(x), self.car(self.cdr(x)))
+            elif self.eq(f, self.check_sym_list('MINUS')).name == 'T':
+                return self.minus(self.car(x), self.car(self.cdr(x)))
+            elif self.eq(f, self.check_sym_list('PLUS')).name == 'T':
+                return self.plus(self.car(x), self.car(self.cdr(x)))
             else:
-                #print(''.join(self.output(self.addpairs(self.car(self.get_val(f, self.dList)), x, alist))))
                 return self.eval(self.cdr(self.get_val(f, self.dList)), self.addpairs(self.car(self.get_val(f, self.dList)), x, alist))
         else:
             print('not a lisp expression')
@@ -194,7 +228,6 @@ class Lisp:
         temp2.right = self.dList
         self.dList = temp2
 
-
     def evaluation(self, exp):
         if exp.type == 2 and self.car(exp) == self.check_sym_list('DEFUN'):
             self.add2dList(self.cdr(exp))
@@ -209,7 +242,7 @@ class Lisp:
             print('CAR received an atom')
 
     def eq(self, exp1, exp2):
-        if exp1.name == exp2.name:
+        if exp1.type == 1 and exp2.type == 1 and exp1.name == exp2.name or exp1.type == 0 and exp2.type == 0 and exp1.val == exp2.val:
             return self.check_sym_list('T')
         else:
             return self.check_sym_list('NIL')
