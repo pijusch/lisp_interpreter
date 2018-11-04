@@ -17,6 +17,5 @@ if __name__ == '__main__':
                     if S:
                         print('> ' + ''.join(lisp.output(S)))
             except Exception as e:
-                print('> Exception! moving to top level')
                 print('> error in lisp expression')
-                continue
+                print('> Moving to top level')

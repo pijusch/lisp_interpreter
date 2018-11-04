@@ -61,7 +61,7 @@ class Lisp:
             temp.val = exp1.val + exp2.val
             return temp
         else:
-            print('wrong argument type in plus')
+            print('> wrong argument type in plus')
             return None
 
     def minus(self, exp1, exp2):
@@ -71,12 +71,12 @@ class Lisp:
             temp.val = exp1.val - exp2.val
             return temp
         else:
-            print('wrong argument type in minus')
+            print('> wrong argument type in minus')
             return None
 
     def evcon(self, exp, alist):
         if self.null(exp).name == 'T':
-            print('No condition satisfies')
+            print('> No condition satisfies')
             return None
         elif self.eval(self.car(self.car(exp)), alist).name == 'T':
             return self.eval(self.car(self.cdr(self.car(exp))), alist)
@@ -115,7 +115,7 @@ class Lisp:
             elif self.in_(exp, alist).name == 'T':
                 return self.get_val(exp, alist)
             else:
-                print('unbounded atom '+ ''.join(self.output(exp)))
+                print('> unbounded atom '+ ''.join(self.output(exp)))
                 return None
         elif self.atom(self.car(exp)).name == 'T':
             if self.eq(self.car(exp), self.check_sym_list('QUOTE')).name == 'T':
@@ -125,7 +125,7 @@ class Lisp:
             else:
                 return self.apply(self.car(exp), self.evlis(self.cdr(exp), alist), alist)
         else:
-            print('not a lisp expression')
+            print('> not a lisp expression')
             return None
 
     def addpairs(self, arg, x, alist):
@@ -151,70 +151,70 @@ class Lisp:
                 if self.count(x).val == 1:
                     return self.car(self.car(x))
                 else:
-                    print('CAR takes 1 argument, '+str(self.count(x).val)+' given')
+                    print('> CAR takes 1 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('CDR')).name == 'T':
                 if self.count(x).val == 1:
                     return self.cdr(self.car(x))
                 else:
-                    print('CDR takes 1 argument, '+str(self.count(x).val)+' given')
+                    print('> CDR takes 1 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('CONS')).name == 'T':
                 if self.count(x).val == 2:
                     return self.cons(self.car(x), self.cdr(x))
                 else:
-                    print('CONS takes 2 argument, '+str(self.count(x).val)+' given')
+                    print('> CONS takes 2 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('ATOM')).name == 'T':
                 if self.count(x).val == 1:
                     return self.atom(self.car(x))
                 else:
-                    print('ATOM takes 1 argument, '+str(self.count(x).val)+' given')
+                    print('> ATOM takes 1 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('NULL')).name == 'T':
                 if self.count(x).val == 1:
                     return self.null(self.car(x))
                 else:
-                    print('NULL takes 1 argument, '+str(self.count(x).val)+' given')
+                    print('> NULL takes 1 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('EQ')).name == 'T':
                 if self.count(x).val == 2:
                     return self.eqa(self.car(x), self.car(self.cdr(x)))
                 else:
-                    print('EQ takes 2 argument, '+str(self.count(x).val)+' given')
+                    print('> EQ takes 2 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('MINUS')).name == 'T':
                 if self.count(x).val == 2:
                     return self.minus(self.car(x), self.car(self.cdr(x)))
                 else:
-                    print('MINUS takes 2 argument, '+str(self.count(x).val)+' given')
+                    print('> MINUS takes 2 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('PLUS')).name == 'T':
                 if self.count(x).val == 2:
                     return self.plus(self.car(x), self.car(self.cdr(x)))
                 else:
-                    print('PLUS takes 2 argument, '+str(self.count(x).val)+' given')
+                    print('> PLUS takes 2 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('GREATER')).name == 'T':
                 if self.count(x).val == 2:
                     return self.greater(self.car(x), self.car(self.cdr(x)))
                 else:
-                    print('GREATER takes 2 argument, '+str(self.count(x).val)+' given')
+                    print('> GREATER takes 2 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('SMALLER')).name == 'T':
                 if self.count(x).val == 2:
                     return self.smaller(self.car(x), self.car(self.cdr(x)))
                 else:
-                    print('SMALLER takes 2 argument, '+str(self.count(x).val)+' given')
+                    print('> SMALLER takes 2 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('COUNT')).name == 'T':
                 if self.car(x).type!=2:
-                    print('COUNT expects list')
+                    print('> COUNT expects list')
                     return None
                 if self.count(x).val == 1:
                     return self.count(self.car(x))
                 else:
-                    print('COUNT takes 1 argument, '+str(self.count(x).val)+' given')
+                    print('> COUNT takes 1 argument, '+str(self.count(x).val)+' given')
                     return None
             else:
                 if self.in_(f, self.dList).name == 'T':
@@ -224,14 +224,14 @@ class Lisp:
                         else:
                             return self.eval(self.cdr(self.get_val(f, self.dList)), self.addpairs(self.car(self.get_val(f, self.dList)), x, alist))
                     else:
-                        print ('In function '+ f.name +' arguments required '+str(self.count(self.car(self.get_val(f, self.dList))).val)+', given '+str(self.count(x).val))
+                        print ('> In function '+ f.name +' arguments required '+str(self.count(self.car(self.get_val(f, self.dList))).val)+', given '+str(self.count(x).val))
                         return None
                 else:
-                    print('Function '+''.join(self.output(f))+' not in dList')
+                    print('> Function '+''.join(self.output(f))+' not in dList')
                     return None
 
         else:
-            print('not a lisp expression')
+            print('> not a lisp expression')
             return None
 
     def add2dList(self, exp):
@@ -242,6 +242,9 @@ class Lisp:
         temp.right = SExp()
         temp.right.type = 2
         temp.right.left = self.cdr(self.car(exp))
+        if self.null(self.cdr(exp)).name == 'T':
+            print('> Empty body not allowed, function '+''.join(self.output(temp.left)))
+            return None
         temp.right.right = self.car(self.cdr(exp))
 
         temp2 = SExp()
@@ -250,10 +253,14 @@ class Lisp:
         temp2.right = self.dList
         self.dList = temp2
 
+        return exp
+
     def evaluation(self, exp):
         if exp.type == 2 and self.car(exp) == self.check_sym_list('DEFUN'):
-            self.add2dList(self.cdr(exp))
-            return self.car(self.car(self.cdr(exp)))
+            if self.add2dList(self.cdr(exp)):
+                return self.car(self.car(self.cdr(exp)))
+            else:
+                return None
         else:
             return self.eval(exp, self.check_sym_list('NIL'))
 
