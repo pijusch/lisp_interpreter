@@ -6,7 +6,7 @@ class Lisp:
 
     def __init__(self):
         self.symbolicList = []
-        self.pList = [] # primitive functions
+        self.pList = []   # primitive functions
 
         self.pList.append('CAR')
         self.pList.append('CDR')
@@ -15,85 +15,38 @@ class Lisp:
         self.pList.append('NULL')
         self.pList.append('EQ')
 
-        # NIL atom
-        nil = SExp()
-        nil.type = 1
-        nil.name = 'NIL'
-        self.update_sym_list(nil)
-
-        # T atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'T'
-        self.update_sym_list(tee)
-
-        # COND atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'COND'
-        self.update_sym_list(tee)
-
-        # QUOTE atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'QUOTE'
-        self.update_sym_list(tee)
-
-        # DEFUN atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'DEFUN'
-        self.update_sym_list(tee)
-
-        # CDR atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'CDR'
-        self.update_sym_list(tee)
-
-        # CAR atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'CAR'
-        self.update_sym_list(tee)
-
-        # CAR atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'CONS'
-        self.update_sym_list(tee)
-
-        # CAR atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'ATOM'
-        self.update_sym_list(tee)
-
-        # CAR atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'NULL'
-        self.update_sym_list(tee)
-
-        # CAR atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'EQ'
-        self.update_sym_list(tee)
-
-        # CAR atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'PLUS'
-        self.update_sym_list(tee)
-
-        # CAR atom
-        tee = SExp()
-        tee.type = 1
-        tee.name = 'MINUS'
-        self.update_sym_list(tee)
+        # Initialize SymbolList
+        self.add_to_symList('NIL')
+        self.add_to_symList('T')
+        self.add_to_symList('COND')
+        self.add_to_symList('CONS')
+        self.add_to_symList('QUOTE')
+        self.add_to_symList('DEFUN')
+        self.add_to_symList('CDR')
+        self.add_to_symList('CAR')
+        self.add_to_symList('CDR')
+        self.add_to_symList('ATOM')
+        self.add_to_symList('NULL')
+        self.add_to_symList('EQ')
+        self.add_to_symList('PLUS')
+        self.add_to_symList('MINUS')
+        self.add_to_symList('GREATER')
+        self.add_to_symList('SMALLER')
+        self.add_to_symList('COUNT')
 
         self.dList = self.check_sym_list('NIL')
+
+    def new_intatom(self, x):
+        temp = SExp()
+        temp.type = 0
+        temp.val = x
+        return temp
+
+    def add_to_symList(self, string):
+        temp = SExp()
+        temp.type = 1
+        temp.name = string
+        self.update_sym_list(temp)
 
     def evlis(self, exp, alist):
         if self.null(exp).name == 'T':
@@ -108,7 +61,7 @@ class Lisp:
             temp.val = exp1.val + exp2.val
             return temp
         else:
-            print('wrong with plus')
+            print('wrong argument type in plus')
             return None
 
     def minus(self, exp1, exp2):
@@ -118,7 +71,7 @@ class Lisp:
             temp.val = exp1.val - exp2.val
             return temp
         else:
-            print('wrong with minus')
+            print('wrong argument type in minus')
             return None
 
     def evcon(self, exp, alist):
@@ -138,6 +91,12 @@ class Lisp:
         else:
             return self.in_(exp, self.cdr(alist))
 
+    def count(self, exp):
+        if self.null(exp).name == 'T':
+            return self.new_intatom(0)
+        else:
+            return self.plus(self.new_intatom(1), self.count(self.cdr(exp)))
+
     def get_val(self, exp, alist):
         if self.eq(self.car(self.car(alist)), exp).name == 'T':
             return self.cdr(self.car(alist))
@@ -145,7 +104,7 @@ class Lisp:
             return self.get_val(exp, self.cdr(alist))
 
     def eval(self, exp, alist):
-        print(''.join(self.output(alist)))
+        # print(''.join(self.output(alist)))
         if self.atom(exp).name == 'T':
             if self.int_(exp).name == 'T':
                 return exp
@@ -156,7 +115,7 @@ class Lisp:
             elif self.in_(exp, alist).name == 'T':
                 return self.get_val(exp, alist)
             else:
-                print('unbounded atom')
+                print('unbounded atom '+ ''.join(self.output(exp)))
                 return None
         elif self.atom(self.car(exp)).name == 'T':
             if self.eq(self.car(exp), self.check_sym_list('QUOTE')).name == 'T':
@@ -164,7 +123,6 @@ class Lisp:
             elif self.eq(self.car(exp), self.check_sym_list('COND')). name == 'T':
                 return self.evcon(self.cdr(exp), alist)
             else:
-                #print(''.join(self.output(self.evlis(self.cdr(exp), alist))))
                 return self.apply(self.car(exp), self.evlis(self.cdr(exp), alist), alist)
         else:
             print('not a lisp expression')
@@ -187,27 +145,85 @@ class Lisp:
 
         return ralist
 
-
     def apply(self, f, x, alist):
         if self.atom(f).name == 'T':
             if self.eq(f, self.check_sym_list('CAR')).name == 'T':
-                return self.car(self.car(x))
+                if self.count(x).val == 1:
+                    return self.car(self.car(x))
+                else:
+                    print('CAR takes 1 argument, '+str(self.count(x).val)+' given')
+                    return None
             elif self.eq(f, self.check_sym_list('CDR')).name == 'T':
-                return self.cdr(self.car(x))
+                if self.count(x).val == 1:
+                    return self.cdr(self.car(x))
+                else:
+                    print('CDR takes 1 argument, '+str(self.count(x).val)+' given')
+                    return None
             elif self.eq(f, self.check_sym_list('CONS')).name == 'T':
-                return self.cons(self.car(x), self.cdr(x))
+                if self.count(x).val == 2:
+                    return self.cons(self.car(x), self.cdr(x))
+                else:
+                    print('CONS takes 2 argument, '+str(self.count(x).val)+' given')
+                    return None
             elif self.eq(f, self.check_sym_list('ATOM')).name == 'T':
-                return self.atom(self.car(x))
+                if self.count(x).val == 1:
+                    return self.atom(self.car(x))
+                else:
+                    print('ATOM takes 1 argument, '+str(self.count(x).val)+' given')
+                    return None
             elif self.eq(f, self.check_sym_list('NULL')).name == 'T':
-                return self.null(self.car(x))
+                if self.count(x).val == 1:
+                    return self.null(self.car(x))
+                else:
+                    print('NULL takes 1 argument, '+str(self.count(x).val)+' given')
+                    return None
             elif self.eq(f, self.check_sym_list('EQ')).name == 'T':
-                return self.eq(self.car(x), self.car(self.cdr(x)))
+                if self.count(x).val == 2:
+                    return self.eqa(self.car(x), self.car(self.cdr(x)))
+                else:
+                    print('EQ takes 2 argument, '+str(self.count(x).val)+' given')
+                    return None
             elif self.eq(f, self.check_sym_list('MINUS')).name == 'T':
-                return self.minus(self.car(x), self.car(self.cdr(x)))
+                if self.count(x).val == 2:
+                    return self.minus(self.car(x), self.car(self.cdr(x)))
+                else:
+                    print('MINUS takes 2 argument, '+str(self.count(x).val)+' given')
+                    return None
             elif self.eq(f, self.check_sym_list('PLUS')).name == 'T':
-                return self.plus(self.car(x), self.car(self.cdr(x)))
+                if self.count(x).val == 2:
+                    return self.plus(self.car(x), self.car(self.cdr(x)))
+                else:
+                    print('PLUS takes 2 argument, '+str(self.count(x).val)+' given')
+                    return None
+            elif self.eq(f, self.check_sym_list('GREATER')).name == 'T':
+                if self.count(x).val == 2:
+                    return self.greater(self.car(x), self.car(self.cdr(x)))
+                else:
+                    print('GREATER takes 2 argument, '+str(self.count(x).val)+' given')
+                    return None
+            elif self.eq(f, self.check_sym_list('SMALLER')).name == 'T':
+                if self.count(x).val == 2:
+                    return self.smaller(self.car(x), self.car(self.cdr(x)))
+                else:
+                    print('SMALLER takes 2 argument, '+str(self.count(x).val)+' given')
+                    return None
+            elif self.eq(f, self.check_sym_list('COUNT')).name == 'T':
+                if self.count(x).val == 1:
+                    return self.count(self.car(x))
+                else:
+                    print('COUNT takes 1 argument, '+str(self.count(x).val)+' given')
+                    return None
             else:
-                return self.eval(self.cdr(self.get_val(f, self.dList)), self.addpairs(self.car(self.get_val(f, self.dList)), x, alist))
+                if self.in_(f, self.dList).name == 'T':
+                    if self.count(self.car(self.get_val(f, self.dList))).val == self.count(x).val:
+                        return self.eval(self.cdr(self.get_val(f, self.dList)), self.addpairs(self.car(self.get_val(f, self.dList)), x, alist))
+                    else:
+                        print ('In function '+ f.name +' arguments required '+str(self.count(self.car(self.get_val(f, self.dList))).val)+', given '+str(self.count(x).val))
+                        return None
+                else:
+                    print('Function '+''.join(self.output(f))+' not in dList')
+                    return None
+
         else:
             print('not a lisp expression')
             return None
@@ -242,8 +258,41 @@ class Lisp:
             print('CAR received an atom')
 
     def eq(self, exp1, exp2):
-        if exp1.type == 1 and exp2.type == 1 and exp1.name == exp2.name or exp1.type == 0 and exp2.type == 0 and exp1.val == exp2.val:
+        if exp1.type == 0 and exp1.val == exp2.val or exp1 == exp2:
             return self.check_sym_list('T')
+        else:
+            return self.check_sym_list('NIL')
+
+    def greater(self, exp1, exp2):
+        if exp1.type == 0 and exp2.type == 0:
+            if exp1.val > exp2.val:
+                return self.check_sym_list('T')
+            else:
+                return self.check_sym_list('NIL')
+        else:
+            print('wrong argument type in greater')
+            return None
+
+    def smaller(self, exp1, exp2):
+        if exp1.type == 0 and exp2.type == 0:
+            if exp1.val < exp2.val:
+                return self.check_sym_list('T')
+            else:
+                return self.check_sym_list('NIL')
+        else:
+            print('wrong argument type in smaller')
+            return None
+
+    def eqa(self, exp1, exp2):
+        if self.atom(exp1).name == 'T':
+            if self.atom(exp2).name == 'T':
+                return self.eq(exp1,exp2)
+            else:
+                return self.check_sym_list('NIL')
+        elif self.atom(exp2).name == 'T':
+            return self.check_sym_list('NIL')
+        elif self.eq(self.car(exp1),self.car(exp2)).name == 'T':
+            return self.eqa(self.cdr(exp1), self.cdr(exp2))
         else:
             return self.check_sym_list('NIL')
 
@@ -420,19 +469,6 @@ class Lisp:
             else:
                 parts += exp[:ls].split()
                 exp = exp[ls:]
-
-        #nparts = []
-
-        #for i in parts:
-         #   if i != '.':
-         #       temp = i.split('.')
-         #       if len(temp[0]) !=0 :
-         #           nparts.append(temp[0])
-         #       for j in temp[1:]:
-         #           if len(j) != 0:
-         #               nparts += ['.', j]
-         #   else:
-         #       nparts.append('.')
 
         return parts
 

@@ -11,13 +11,11 @@ if __name__ == '__main__':
             break
         else:
             exp = lisp.input(x)
-            S = lisp.evaluation(exp)
-            #print(''.join(lisp.output(lisp.dList)))
-            if S:
-                print('> ' + ''.join(lisp.output(S)))
-            #print('> ' + ''.join(lisp.output(lisp.dList)))
-            #print('> ' + ''.join(lisp.output(lisp.get_val(lisp.check_sym_list('ADD'), lisp.dList))))
-            #print('> ' + ''.join(lisp.output(lisp.eq(exp,lisp.check_sym_list('T')))))
-            # # eval()    To be added in part2
-            # if exp:
-            #     print('> ' + ''.join(lisp.output(exp)))
+            try:
+                if exp:
+                    S = lisp.evaluation(exp)
+                    if S:
+                        print('> ' + ''.join(lisp.output(S)))
+            except:
+                print('Exception! moving to top level')
+                continue
