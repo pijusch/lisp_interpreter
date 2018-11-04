@@ -208,6 +208,9 @@ class Lisp:
                     print('SMALLER takes 2 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('COUNT')).name == 'T':
+                if self.car(x).type!=2:
+                    print('COUNT expects list')
+                    return None
                 if self.count(x).val == 1:
                     return self.count(self.car(x))
                 else:
@@ -216,7 +219,10 @@ class Lisp:
             else:
                 if self.in_(f, self.dList).name == 'T':
                     if self.count(self.car(self.get_val(f, self.dList))).val == self.count(x).val:
-                        return self.eval(self.cdr(self.get_val(f, self.dList)), self.addpairs(self.car(self.get_val(f, self.dList)), x, alist))
+                        if self.count(x).val == 0:
+                            return self.eval(self.cdr(self.get_val(f, self.dList)),alist)
+                        else:
+                            return self.eval(self.cdr(self.get_val(f, self.dList)), self.addpairs(self.car(self.get_val(f, self.dList)), x, alist))
                     else:
                         print ('In function '+ f.name +' arguments required '+str(self.count(self.car(self.get_val(f, self.dList))).val)+', given '+str(self.count(x).val))
                         return None
@@ -346,8 +352,8 @@ class Lisp:
         elif len(full_x) == 0:
             print('> **error: empty**')
             return None
-        elif re.search('[^a-z^A-Z^0-9^(^)^.^\s^-]+', full_x):
-            full_x = re.search('[^a-z^A-Z^0-9^(^)^.^\s^-]+', full_x)
+        elif re.search('[^a-z^A-Z^0-9^(^)^.^\s^\\-^\\+]+', full_x):
+            full_x = re.search('[^a-z^A-Z^0-9^(^)^.^\s^\\-^\\+]+', full_x)
             print('> **error unexpected ' + full_x.group() + '**')
             return None
 
@@ -387,7 +393,7 @@ class Lisp:
         left_par = exp.find('(')
 
         if left_par == -1: # Its atomic
-            if self.fullmatch('-?[0-9]+', exp):
+            if self.fullmatch('-?\+?[0-9]+', exp):
                 exp = int(exp)
                 if abs(exp) > 999999:
                     print('> **error: illegal integer**')

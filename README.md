@@ -25,3 +25,36 @@ Running the code:
 
 	$$
 	> bye!!
+
+
+
+
+PART2:
+
+The code structure is same as before
+
+Running the Code:
+
+1.	execute- python Main.py
+2. copy and paste the test cases like show below:
+
+	(DEFUN MINUS2 (A B) (MINUS A B))
+	$
+	> MINUS2
+
+	
+        (DEFUN (NOTSOSILLY (A B)) 
+            (COND
+               ((EQ A 0) (PLUS B 1))
+               ((EQ B 0) (NOTSOSILLY (MINUS2 A 1) 1))
+               (T (NOTSOSILLY (MINUS2 A 1) (NOTSOSILLY A (MINUS2 B 1))))
+             ))
+        $
+	> NOTSOSILLY
+
+        (NOTSOSILLY 0 0)
+        > 1
+
+3.      end by '$$'
+        $$
+	> bye!!
