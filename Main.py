@@ -1,6 +1,5 @@
 from Lisp import Lisp
 
-
 if __name__ == '__main__':
     lisp = Lisp()
 

@@ -1,0 +1,21 @@
+Some comments about the code
+
+1. COUNT takes all kind of inputs (not just restricted to atoms)
+
+2. Symbollics can be assigned values using functions with no arguments
+   eg:
+	(DEFUN (A ()) 45)
+	$
+	> A
+
+	(LESS (A) 100)
+	$
+	> T
+
+	(A)
+	$
+	> 45
+
+3. Exceptions are handled without traceback and exception name. The code tells about the exception and moves to top level.
+
+4. Error messages: All given in the handout and test cases. (Not exhaustive. During some errors, the control moves to top level without pointing out the exact cause of error.)

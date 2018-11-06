@@ -31,18 +31,23 @@ Running the code:
 
 PART2:
 
-The code structure is same as before
+The code structure is same as before:
+Main.py- Runs the Input/Output and Evaluator
+Lisp.py- The class that contains Input, Output, Eval, DList, AList and Symbol List.
+SExp.py- Class for s-expressions
+
+The Lisp Class contains utility functions for input/output and eval.
+
 
 Running the Code:
 
 1.	execute- python Main.py
-2. copy and paste the test cases like show below:
+2.	copy and paste the test cases like show below:
 
-	(DEFUN MINUS2 (A B) (MINUS A B))
+	(DEFUN (MINUS2 (A B)) (MINUS A B))
 	$
 	> MINUS2
 
-	
         (DEFUN (NOTSOSILLY (A B)) 
             (COND
                ((EQ A 0) (PLUS B 1))
@@ -53,7 +58,12 @@ Running the Code:
 	> NOTSOSILLY
 
         (NOTSOSILLY 0 0)
+	$
         > 1
+
+	(NOTSOSILLY 0)
+	$
+	> NOTSOSILLY takes 2 argument, 1 given
 
 3.      end by '$$'
         $$

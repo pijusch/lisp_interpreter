@@ -31,8 +31,13 @@ class Lisp:
         self.add_to_symList('PLUS')
         self.add_to_symList('MINUS')
         self.add_to_symList('GREATER')
-        self.add_to_symList('SMALLER')
+        self.add_to_symList('LESS')
         self.add_to_symList('COUNT')
+        self.add_to_symList('INT')
+        self.add_to_symList('TIMES')
+        self.add_to_symList('QUOTIENT')
+        self.add_to_symList('REMAINDER')
+
 
         self.dList = self.check_sym_list('NIL')
 
@@ -72,6 +77,42 @@ class Lisp:
             return temp
         else:
             print('> wrong argument type in minus')
+            return None
+
+    def int(self, exp):
+        if exp.type == 0:
+            return self.check_sym_list('T')
+        else:
+            return self.check_sym_list('NIL')
+
+    def times(self, exp1, exp2):
+        if exp1.type == 0 and exp2.type == 0:
+            temp = SExp()
+            temp.type = 0
+            temp.val = exp1.val * exp2.val
+            return temp
+        else:
+            print('> wrong argument type in times')
+            return None
+
+    def remainder(self, exp1, exp2):
+        if exp1.type == 0 and exp2.type == 0:
+            temp = SExp()
+            temp.type = 0
+            temp.val = exp1.val % exp2.val
+            return temp
+        else:
+            print('> wrong argument type in remainder')
+            return None
+
+    def quotient(self, exp1, exp2):
+        if exp1.type == 0 and exp2.type == 0:
+            temp = SExp()
+            temp.type = 0
+            temp.val = int(exp1.val / exp2.val)
+            return temp
+        else:
+            print('> wrong argument type in quotient')
             return None
 
     def evcon(self, exp, alist):
@@ -161,7 +202,7 @@ class Lisp:
                     return None
             elif self.eq(f, self.check_sym_list('CONS')).name == 'T':
                 if self.count(x).val == 2:
-                    return self.cons(self.car(x), self.cdr(x))
+                    return self.cons(self.car(x), self.car(self.cdr(x)))
                 else:
                     print('> CONS takes 2 argument, '+str(self.count(x).val)+' given')
                     return None
@@ -201,11 +242,35 @@ class Lisp:
                 else:
                     print('> GREATER takes 2 argument, '+str(self.count(x).val)+' given')
                     return None
-            elif self.eq(f, self.check_sym_list('SMALLER')).name == 'T':
+            elif self.eq(f, self.check_sym_list('LESS')).name == 'T':
                 if self.count(x).val == 2:
                     return self.smaller(self.car(x), self.car(self.cdr(x)))
                 else:
-                    print('> SMALLER takes 2 argument, '+str(self.count(x).val)+' given')
+                    print('> LESS takes 2 argument, '+str(self.count(x).val)+' given')
+                    return None
+            elif self.eq(f, self.check_sym_list('INT')).name == 'T':
+                if self.count(x).val == 1:
+                    return self.int(self.car(x))
+                else:
+                    print('> INT takes 1 argument, '+str(self.count(x).val)+' given')
+                    return None
+            elif self.eq(f, self.check_sym_list('REMAINDER')).name == 'T':
+                if self.count(x).val == 2:
+                    return self.remainder(self.car(x), self.car(self.cdr(x)))
+                else:
+                    print('> REMAINDER takes 2 argument, '+str(self.count(x).val)+' given')
+                    return None
+            elif self.eq(f, self.check_sym_list('QUOTIENT')).name == 'T':
+                if self.count(x).val == 2:
+                    return self.smaller(self.car(x), self.car(self.cdr(x)))
+                else:
+                    print('> QUOTIENT takes 2 argument, '+str(self.count(x).val)+' given')
+                    return None
+            elif self.eq(f, self.check_sym_list('TIMES')).name == 'T':
+                if self.count(x).val == 2:
+                    return self.times(self.car(x), self.car(self.cdr(x)))
+                else:
+                    print('> TIMES takes 2 argument, '+str(self.count(x).val)+' given')
                     return None
             elif self.eq(f, self.check_sym_list('COUNT')).name == 'T':
                 if self.car(x).type!=2:
@@ -224,7 +289,7 @@ class Lisp:
                         else:
                             return self.eval(self.cdr(self.get_val(f, self.dList)), self.addpairs(self.car(self.get_val(f, self.dList)), x, alist))
                     else:
-                        print ('> In function '+ f.name +' arguments required '+str(self.count(self.car(self.get_val(f, self.dList))).val)+', given '+str(self.count(x).val))
+                        print ('> '+ f.name +' takes '+str(self.count(self.car(self.get_val(f, self.dList))).val)+' argument, given '+str(self.count(x).val))
                         return None
                 else:
                     print('> Function '+''.join(self.output(f))+' not in dList')
@@ -235,25 +300,27 @@ class Lisp:
             return None
 
     def add2dList(self, exp):
+            if self.count(exp).val != 2 or self.count(self.car(exp)).val!= 2 or self.atom(self.car(self.cdr(self.car(exp)))).name == 'T' and self.null(self.car(self.cdr(self.car(exp)))).name == 'NIL':
+                print('> error in function definition')
+                return None
+            temp = SExp()
+            temp.type = 2
+            temp.left = self.car(self.car(exp))
+            temp.right = SExp()
+            temp.right.type = 2
+            temp.right.left = self.car(self.cdr(self.car(exp))) # changed here
+            if self.null(self.cdr(exp)).name == 'T':
+                print('> Empty body not allowed, function '+''.join(self.output(temp.left)))
+                return None
+            temp.right.right = self.car(self.cdr(exp))
 
-        temp = SExp()
-        temp.type = 2
-        temp.left = self.car(self.car(exp))
-        temp.right = SExp()
-        temp.right.type = 2
-        temp.right.left = self.cdr(self.car(exp))
-        if self.null(self.cdr(exp)).name == 'T':
-            print('> Empty body not allowed, function '+''.join(self.output(temp.left)))
-            return None
-        temp.right.right = self.car(self.cdr(exp))
+            temp2 = SExp()
+            temp2.type = 2
+            temp2.left = temp
+            temp2.right = self.dList
+            self.dList = temp2
 
-        temp2 = SExp()
-        temp2.type = 2
-        temp2.left = temp
-        temp2.right = self.dList
-        self.dList = temp2
-
-        return exp
+            return exp
 
     def evaluation(self, exp):
         if exp.type == 2 and self.car(exp) == self.check_sym_list('DEFUN'):
@@ -268,7 +335,7 @@ class Lisp:
         if exp.type == 2:
             return exp.left
         else:
-            print('CAR received an atom')
+            print('> CAR received an atom')
 
     def eq(self, exp1, exp2):
         if exp1.type == 0 and exp1.val == exp2.val or exp1 == exp2:
@@ -283,7 +350,7 @@ class Lisp:
             else:
                 return self.check_sym_list('NIL')
         else:
-            print('wrong argument type in greater')
+            print('> wrong argument type in greater')
             return None
 
     def smaller(self, exp1, exp2):
@@ -293,7 +360,7 @@ class Lisp:
             else:
                 return self.check_sym_list('NIL')
         else:
-            print('wrong argument type in smaller')
+            print('> wrong argument type in smaller')
             return None
 
     def eqa(self, exp1, exp2):
@@ -313,7 +380,7 @@ class Lisp:
         if exp.type == 2:
             return exp.right
         else:
-            print('CDR received an atom')
+            print('> CDR received an atom')
             return None
 
     def atom(self, exp):
